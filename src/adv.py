@@ -35,43 +35,67 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#
-# Main
-#
+# add items in the rooms
+item_list = {
+    'book' : Item("book", "You'll enjoy reading this book"),
+    'coins' : Item("coins", "Collect coins"),
+    'wand' : Item("wand", "Magic wand"),
+    'weapon' : Item("weapon", "You might need it"),
+    'food' : Item("food", "Incase you get hungry"),
+    'water' : Item("water", "You might get thirsty"),
+    'map' : Item("map", "In case you get lost")
+    }
 
-# Make a new player object that is currently in the 'outside' room.
+room['outside'].items.append(item_list['book'])
+room['outside'].items.append(item_list['coins'])
+room['foyer'].items.append(item_list['wand'])
+room['foyer'].items.append(item_list['weapon'])
+room['overlook'].items.append(item_list['food'])
+room['narrow'].items.append(item_list['water'])
+room['treasure'].items.append(item_list['map'])
 
-player = Player('outside')
-
-# Write a loop that:
-#
+player = Player(room['outside'])
 
 play_status = 'p'
-
+item_picked = ''
 while play_status != 'q':
-    print(f"You are in {player.current_room}")
+    print("-----------------------------")
+    print(f"\nPlayer, You are in room \"{player.current_room.name}\"")
+    print(f"About this room : {player.current_room.description}")
+    print(f"This room has - {player.current_room.list_items()}\n")
+    if (item_picked == '' or item_picked == 'None' or item_picked == 'none'):
+        pass
+    else:
+        print(f"You have {item_picked.name}")
+        print("--------------------------------\n")
+        print(f"Drop your item in this room?")
+        ans= input("Yes or No:")
+        if (ans == 'Yes' or ans == 'yes'):
+            player.current_room.items.append(item_picked)
+            print(f"This room now has - {player.current_room.list_items()}\n")
+            item_picked=''
+    item_chosen_str = input("Enter the item you want to pick or \'None\': ")
+    print(item_chosen_str)
+    item_picked = item_list[item_chosen_str]
+    if (item_picked == '' or item_picked == 'None' or item_picked == 'none'):
+        pass
+    else:
+        player.current_room.items.remove(item_picked)
+        pass
     print("Print n:s:e:w to move q to quit")
     direction = input("Enter your choice: ")
     if direction not in ('s','e','w','q', 'n'):
         print("Invalid input")
     elif direction == 'q':
         break
-    if direction == 's' and room[player.current_room].s_to != '':
-        player.current_room = room[player.current_room].s_to.name
-    elif direction == 'n' and room[player.current_room].n_to != '':
-        player.current_room = room[player.current_room].n_to.name
-    elif direction == 'e' and room[player.current_room].e_to != '':
-        player.current_room = room[player.current_room].e_to.name
-    elif direction == 'w' and room[player.current_room].w_to != '':
-        player.current_room = room[player.current_room].w_to.name
+    new_room =''
+    if direction == 's' and player.current_room.s_to is not None:
+        player.current_room = player.current_room.s_to
+    elif direction == 'n' and player.current_room.n_to is not None:
+        player.current_room = player.current_room.n_to
+    elif direction == 'e' and player.current_room.e_to :
+        player.current_room = player.current_room.e_to
+    elif direction == 'w' and player.current_room.w_to != '':
+        player.current_room = player.current_room.w_to
     else:
         print("Move not allowed")
-
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
